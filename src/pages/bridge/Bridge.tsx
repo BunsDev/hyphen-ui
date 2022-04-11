@@ -19,7 +19,7 @@ import TransferModal from './components/TransferModal';
 import { useTransaction } from 'context/Transaction';
 import { useBiconomy } from 'context/Biconomy';
 import CustomTooltip from '../../components/CustomTooltip';
-import { HiInformationCircle } from 'react-icons/hi';
+import { HiGift, HiInformationCircle } from 'react-icons/hi';
 import { useToken } from 'context/Token';
 
 interface BridgeProps {}
@@ -76,11 +76,22 @@ const Bridge: React.FC<BridgeProps> = () => {
           <div className="relative z-10">
             <div className="flex flex-col gap-2 rounded-10 bg-white p-6 shadow-lg">
               <div className="mb-2 flex items-center justify-end">
-                <div className="flex items-center">
+                <button className="mr-2 flex items-center rounded-lg border p-2 hover:bg-gray-100">
+                  <HiGift className="mr-1.5 h-4 w-4 text-gray-500" />
+                  <span className="text-xxs font-bold uppercase text-gray-500">
+                    Rewards
+                  </span>
+                </button>
+
+                <button
+                  className="flex items-center rounded-lg border p-2 hover:bg-gray-100"
+                  onClick={() => setIsBiconomyToggledOn(!isBiconomyEnabled)}
+                >
                   <HiInformationCircle
                     data-tip
                     data-for="gaslessMode"
-                    className="mr-2 text-gray-500"
+                    className="mr-1.5 h-4 w-4 text-gray-500"
+                    onClick={e => e.stopPropagation()}
                   />
                   <CustomTooltip id="gaslessMode">
                     <span>This transaction is sponsored by Biconomy</span>
@@ -94,7 +105,7 @@ const Bridge: React.FC<BridgeProps> = () => {
                     data-tip
                     data-for="whyGaslessDisabled"
                   >
-                    <span className="mr-2 text-base font-semibold text-gray-500">
+                    <span className="mr-2 text-xxs font-bold uppercase text-gray-500">
                       Gasless Mode
                     </span>
                     <Toggle
@@ -103,7 +114,7 @@ const Bridge: React.FC<BridgeProps> = () => {
                       onToggle={enabled => setIsBiconomyToggledOn(enabled)}
                     />
                   </div>
-                </div>
+                </button>
                 {!isBiconomyAllowed && (
                   <CustomTooltip id="whyGaslessDisabled">
                     <span>Disabled for selected chain</span>
