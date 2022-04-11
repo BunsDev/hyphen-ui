@@ -21,6 +21,7 @@ import { useBiconomy } from 'context/Biconomy';
 import CustomTooltip from '../../components/CustomTooltip';
 import { HiGift, HiInformationCircle } from 'react-icons/hi';
 import { useToken } from 'context/Token';
+import RewardsModal from './components/RewardsModal';
 
 interface BridgeProps {}
 
@@ -31,6 +32,7 @@ const Bridge: React.FC<BridgeProps> = () => {
   const { isBiconomyAllowed, setIsBiconomyToggledOn, isBiconomyEnabled } =
     useBiconomy()!;
   const { isLoggedIn, connect } = useWalletProvider()!;
+
   const {
     isVisible: isApprovalModalVisible,
     hideModal: hideApprovalModal,
@@ -41,6 +43,12 @@ const Bridge: React.FC<BridgeProps> = () => {
     hideModal: hideTransferlModal,
     showModal: showTransferModal,
   } = useModal();
+  const {
+    isVisible: isRewardsModalVisible,
+    hideModal: hideRewardsModal,
+    showModal: showRewardsModal,
+  } = useModal();
+
   const { executeApproveTokenError, executeApproveToken } = useTokenApproval()!;
 
   useEffect(() => {
@@ -63,6 +71,7 @@ const Bridge: React.FC<BridgeProps> = () => {
           transferAmount={transferAmount}
         />
       ) : null}
+
       <TransferModal
         isVisible={isTransferModalVisible}
         onClose={() => {
@@ -70,13 +79,22 @@ const Bridge: React.FC<BridgeProps> = () => {
           hideTransferlModal();
         }}
       />
+
+      <RewardsModal
+        isVisible={isRewardsModalVisible}
+        onClose={hideRewardsModal}
+      />
+
       <ErrorModal error={executeApproveTokenError} title={'Approval Error'} />
-      <div className="my-24">
+      <div className="mt-24">
         <div className="mx-auto max-w-xl">
           <div className="relative z-10">
             <div className="flex flex-col gap-2 rounded-10 bg-white p-6 shadow-lg">
-              <div className="mb-2 flex items-center justify-end">
-                <button className="mr-2 flex items-center rounded-lg border p-2 hover:bg-gray-100">
+              <div className="flex items-center justify-end">
+                <button
+                  className="mr-2 flex items-center rounded-lg border p-2 hover:bg-gray-100"
+                  onClick={showRewardsModal}
+                >
                   <HiGift className="mr-1.5 h-4 w-4 text-gray-500" />
                   <span className="text-xxs font-bold uppercase text-gray-500">
                     Rewards
