@@ -1,6 +1,13 @@
 import styles from './Voucher.module.css';
 
-function Voucher() {
+interface IVoucherProps {
+  id: number;
+  title: string;
+  description: string;
+  redeem: (id: number) => void;
+}
+
+function Voucher({ id, title, description, redeem }: IVoucherProps) {
   return (
     <div className={styles.voucher}>
       <div className={styles.voucherLogoContainer}>
@@ -12,12 +19,16 @@ function Voucher() {
       </div>
 
       <div className={styles.voucherDescription}>
-        <h3 className="mb-2 text-base font-semibold text-white">Game Night</h3>
-        <p className="mb-4 text-center text-xs text-white">
-          Chill with the Biconomy team during one of their game nights. Chat,
-          have fun and have a jolly good time!
-        </p>
-        <button className={styles.voucherRedeemButton}>Redeem</button>
+        <div className="flex flex-col items-center">
+          <h3 className="mb-2 text-base font-semibold text-white">{title}</h3>
+          <p className="mb-4 text-center text-xs text-white">{description}</p>
+        </div>
+        <button
+          className={styles.voucherRedeemButton}
+          onClick={() => redeem(id)}
+        >
+          Redeem
+        </button>
       </div>
     </div>
   );
