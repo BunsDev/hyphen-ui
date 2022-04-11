@@ -20,7 +20,7 @@ import { useBiconomy } from 'context/Biconomy';
 import CustomTooltip from '../../components/CustomTooltip';
 import { HiGift, HiInformationCircle } from 'react-icons/hi';
 import { useToken } from 'context/Token';
-import RewardsModal from './components/RewardsModal';
+import VouchersModal from './components/VouchersModal';
 import { useHyphen } from 'context/Hyphen';
 
 interface BridgeProps {}
@@ -46,9 +46,9 @@ const Bridge: React.FC<BridgeProps> = () => {
     showModal: showTransferModal,
   } = useModal();
   const {
-    isVisible: isRewardsModalVisible,
-    hideModal: hideRewardsModal,
-    showModal: showRewardsModal,
+    isVisible: isVouchersModalVisible,
+    hideModal: hideVouchersModal,
+    showModal: showVouchersModal,
   } = useModal();
 
   const { executeApproveTokenError, executeApproveToken } = useTokenApproval()!;
@@ -82,9 +82,9 @@ const Bridge: React.FC<BridgeProps> = () => {
         }}
       />
 
-      <RewardsModal
-        isVisible={isRewardsModalVisible}
-        onClose={hideRewardsModal}
+      <VouchersModal
+        isVisible={isVouchersModalVisible}
+        onClose={hideVouchersModal}
       />
 
       <ErrorModal error={executeApproveTokenError} title={'Approval Error'} />
@@ -95,15 +95,15 @@ const Bridge: React.FC<BridgeProps> = () => {
               <div className="flex items-center justify-end">
                 <button
                   className="mr-2 flex items-center rounded-lg border p-2 hover:bg-gray-100"
-                  onClick={showRewardsModal}
+                  onClick={showVouchersModal}
                 >
                   <HiGift className="mr-1.5 h-4 w-4 text-gray-500" />
                   <span className="text-xxs font-bold uppercase text-gray-500">
-                    Rewards
+                    Vouchers
                   </span>
                 </button>
 
-                <button
+                <div
                   className="flex items-center rounded-lg border p-2 hover:bg-gray-100"
                   onClick={() => setIsBiconomyToggledOn(!isBiconomyEnabled)}
                 >
@@ -134,7 +134,7 @@ const Bridge: React.FC<BridgeProps> = () => {
                       onToggle={enabled => setIsBiconomyToggledOn(enabled)}
                     />
                   </div>
-                </button>
+                </div>
                 {!isBiconomyAllowed && (
                   <CustomTooltip id="whyGaslessDisabled">
                     <span>Disabled for selected chain</span>

@@ -1,0 +1,71 @@
+.voucher {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(
+    to right,
+    rgb(249, 168, 212),
+    rgb(216, 180, 254),
+    rgb(129, 140, 248)
+  );
+  border-radius: 30px;
+  -webkit-mask-image: radial-gradient(
+      circle at 160px 10px,
+      transparent 10px,
+      red 10.5px
+    ),
+    radial-gradient(closest-side circle at 50%, red 99%, transparent 100%);
+  -webkit-mask-size: 100%, 4px 13px;
+  -webkit-mask-repeat: repeat, repeat-y;
+  -webkit-mask-position: 0 -10px, 158px;
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+}
+
+.voucherLogoContainer {
+  position: absolute;
+  left: 16px;
+  height: 8rem;
+  width: 8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 18px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.voucherLogo {
+  height: 4rem;
+  width: 4rem;
+}
+
+.voucherDescription {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  width: calc(100% - 160px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 2rem;
+}
+
+.voucherRedeemButton {
+  height: 36px;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.voucherRedeemButton:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
