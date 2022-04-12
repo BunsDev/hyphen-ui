@@ -1,13 +1,24 @@
 import styles from './Voucher.module.css';
 
+export interface IVoucher {
+  chainExcluded?: string[];
+  contractCall: boolean;
+  freeTransactions: number;
+  isActive: boolean;
+  milestoneCode: number;
+  milestoneDesc: string;
+  milestoneTitle: string;
+  thresholdLoyalityScore: number;
+}
 interface IVoucherProps {
-  id: number;
-  title: string;
-  description: string;
-  redeem: (id: number) => void;
+  voucher: IVoucher;
+  redeem: (voucher: IVoucher) => void;
+  userLoyalityScore: number;
 }
 
-function Voucher({ id, title, description, redeem }: IVoucherProps) {
+function Voucher({ voucher, redeem, userLoyalityScore }: IVoucherProps) {
+  const { milestoneDesc, milestoneTitle, thresholdLoyalityScore } = voucher;
+
   return (
     <div className={styles.voucher}>
       <div className={styles.voucherLogoContainer}>
@@ -20,14 +31,19 @@ function Voucher({ id, title, description, redeem }: IVoucherProps) {
 
       <div className={styles.voucherDescription}>
         <div className="flex flex-col items-center">
-          <h3 className="mb-2 text-base font-semibold text-white">{title}</h3>
-          <p className="mb-4 text-center text-xs text-white">{description}</p>
+          <h3 className="mb-2 text-base font-semibold text-white">
+            {milestoneTitle}
+          </h3>
+          <p className="mb-4 text-center text-xs text-white">{milestoneDesc}</p>
         </div>
         <button
           className={styles.voucherRedeemButton}
-          onClick={() => redeem(id)}
+          onClick={() => redeem(voucher)}
+          disabled={userLoyalityScore < thresholdLoyalityScore}
         >
-          Redeem
+          {userLoyalityScore >= thresholdLoyalityScore
+            ? 'Redeem'
+            : `Unlocks at ${thresholdLoyalityScore}`}
         </button>
       </div>
     </div>

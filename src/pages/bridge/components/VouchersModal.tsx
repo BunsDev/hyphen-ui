@@ -2,53 +2,119 @@ import { Dialog } from '@headlessui/react';
 import { IoMdClose } from 'react-icons/io';
 
 import Modal from 'components/Modal';
-import Voucher from './Voucher';
+import Voucher, { IVoucher } from './Voucher';
 import { useQuery } from 'react-query';
 import { useWalletProvider } from 'context/WalletProvider';
 import useModal from 'hooks/useModal';
 import VoucherFormModal from './Voucher/VoucherFormModal';
+
+const mockAvailedVouchersData = {
+  userLoyalityScore: 650,
+  milestoneMetaDataMap: {
+    1: {
+      availed: true,
+    },
+    2: {
+      availed: true,
+    },
+    5: {
+      availed: false,
+      availedFreeTransactions: 1,
+      assignedFreeTransactions: 3,
+    },
+  },
+};
+
+const mockVouchersData = {
+  milestoneList: [
+    {
+      milestoneCode: 1,
+      thresholdLoyalityScore: 2500,
+      milestoneDesc:
+        "Know Biconomy's team more closely, Get a chance to join the Biconomy’s famous Gaming Night",
+      milestoneTitle: 'Join Us',
+      isActive: true,
+      contractCall: false,
+      freeTransactions: 0,
+    },
+    {
+      milestoneCode: 2,
+      thresholdLoyalityScore: 600,
+      milestoneDesc: 'Enroll for Biconomy Tshirt',
+      milestoneTitle: 'Get Your Swag',
+      isActive: true,
+      contractCall: false,
+      freeTransactions: 0,
+    },
+    {
+      milestoneCode: 3,
+      thresholdLoyalityScore: 600,
+      milestoneDesc:
+        'Get a chance to Join Next Biconomy Meetup Event in your city',
+      milestoneTitle: 'Free Entry Passes',
+      isActive: true,
+      contractCall: false,
+      freeTransactions: 0,
+    },
+    {
+      milestoneCode: 4,
+      thresholdLoyalityScore: 600,
+      milestoneDesc:
+        'Get Biconomy Mug for your daily coffee doses with Biconomy',
+      milestoneTitle: 'Coffee With Biconomy',
+      isActive: true,
+      contractCall: false,
+      freeTransactions: 0,
+    },
+    {
+      milestoneCode: 5,
+      thresholdLoyalityScore: 600,
+      milestoneDesc:
+        'Gasless exits on non-evmGet waive of on gasFee while exiting on non-evm chains',
+      milestoneTitle: 'Gasless Exit',
+      isActive: true,
+      contractCall: true,
+      freeTransactions: 3,
+      chainExcluded: ['1', '5', '4'],
+    },
+  ],
+};
 
 interface IVouchersModalProps {
   isVisible: boolean;
   onClose: () => void;
 }
 
-interface IMilestone {
-  milestoneCode: number;
-  thresholdLoyaltyScore: number;
-  milestoneDesc: string;
-  milestoneTitle: string;
-}
-
 function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
   const { accounts, isLoggedIn } = useWalletProvider()!;
 
-  const {
-    isLoading: availedVouchersDataLoading,
-    isFetched: availedVouchersDataFetched,
-    data: availedVouchersData,
-  } = useQuery(
-    'vouchers',
-    () =>
-      fetch(
-        `https://e095-2405-204-8083-c73a-e4f5-5e37-5066-55f2.ngrok.io/api/v1/insta-exit/loyality-data?userAddress=${accounts?.[0]}`,
-      ).then(res => res.json()),
-    {
-      enabled: isLoggedIn && isVisible,
-    },
-  );
+  // const { isLoading: isVouchersDataLoading, data: vouchersData } = useQuery(
+  //   'vouchers',
+  //   () =>
+  //     fetch('https://localhost:3000/milestone-list').then(res => res.json()),
+  //   {
+  //     enabled: isLoggedIn && isVisible,
+  //   },
+  // );
+  // const { milestoneList } = vouchersData ?? {};
 
-  const { isLoading: isVouchersDataLoading, data: vouchersData } = useQuery(
-    'vouchers',
-    () =>
-      fetch(
-        'https://e095-2405-204-8083-c73a-e4f5-5e37-5066-55f2.ngrok.io/api/v1/data/milestone-list',
-      ).then(res => res.json()),
-    {
-      enabled: isLoggedIn && isVisible,
-    },
-  );
-  const { milestoneList } = vouchersData ?? {};
+  // const { isLoading: isAvailedVouchersDataLoading, data: availedVouchersData } =
+  //   useQuery(
+  //     'vouchers',
+  //     () =>
+  //       fetch(`https://localhost:3000/availed-vouchers`).then(res =>
+  //         res.json(),
+  //       ),
+  //     {
+  //       enabled: isLoggedIn && isVisible,
+  //     },
+  //   );
+
+  // TODO: temp variables, delete after API is ready.
+  const userLoyalityScore = mockAvailedVouchersData.userLoyalityScore;
+  const isVouchersDataLoading = false;
+  const isAvailedVouchersDataLoading = false;
+  const milestoneList = mockVouchersData.milestoneList;
 
   const {
     isVisible: isVoucherFormModalVisible,
@@ -56,9 +122,12 @@ function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
     showModal: showVoucherFormModal,
   } = useModal();
 
-  function handleRedeem(id: number) {
-    showVoucherFormModal();
+  function handleRedeem(voucher: IVoucher) {
+    console.log(voucher);
+    // showVoucherFormModal();
   }
+
+  console.log(milestoneList[0]);
 
   return (
     <>
@@ -81,6 +150,7 @@ function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
                 <IoMdClose className="h-6 w-auto text-gray-500" />
               </button>
             </div>
+
             <div className="grid max-h-96 grid-cols-1 gap-2 overflow-auto">
               {isVouchersDataLoading ? (
                 <section className="flex h-40 items-start justify-center pt-12">
@@ -118,15 +188,19 @@ function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
               ) : null}
 
               {milestoneList && milestoneList.length > 0
-                ? milestoneList.map((milestone: IMilestone) => (
-                    <Voucher
-                      key={milestone.milestoneCode}
-                      id={milestone.milestoneCode}
-                      title={milestone.milestoneTitle}
-                      description={milestone.milestoneDesc}
-                      redeem={handleRedeem}
-                    />
-                  ))
+                ? milestoneList
+                    .sort(
+                      (a, b) =>
+                        a.thresholdLoyalityScore - b.thresholdLoyalityScore,
+                    )
+                    .map((voucher: IVoucher) => (
+                      <Voucher
+                        key={voucher.milestoneCode}
+                        voucher={voucher}
+                        redeem={handleRedeem}
+                        userLoyalityScore={userLoyalityScore}
+                      />
+                    ))
                 : null}
             </div>
           </div>
