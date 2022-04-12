@@ -18,7 +18,7 @@ import TransferModal from './components/TransferModal';
 import { useTransaction } from 'context/Transaction';
 import { useBiconomy } from 'context/Biconomy';
 import CustomTooltip from '../../components/CustomTooltip';
-import { HiGift, HiInformationCircle } from 'react-icons/hi';
+import { HiTicket, HiInformationCircle } from 'react-icons/hi';
 import { useToken } from 'context/Token';
 import VouchersModal from './components/VouchersModal';
 import { useHyphen } from 'context/Hyphen';
@@ -97,7 +97,7 @@ const Bridge: React.FC<BridgeProps> = () => {
                   className="mr-2 flex items-center rounded-lg border p-2 hover:bg-gray-100"
                   onClick={showVouchersModal}
                 >
-                  <HiGift className="mr-1.5 h-4 w-4 text-gray-500" />
+                  <HiTicket className="mr-1.5 h-4 w-4 text-gray-500" />
                   <span className="text-xxs font-bold uppercase text-gray-500">
                     Vouchers
                   </span>
