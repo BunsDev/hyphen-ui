@@ -118,7 +118,7 @@ function Voucher({
             ) : contractCall && !toChain ? (
               'Select destination chain'
             ) : isToChainExcluded ? (
-              'Destination chain unsupported'
+              `Unsupported for ${toChain?.name}`
             ) : userLoyalityScore >= thresholdLoyalityScore ? (
               'Redeem'
             ) : (
