@@ -3,6 +3,8 @@ import { useWalletProvider } from 'context/WalletProvider';
 import { HiOutlineArrowSmRight } from 'react-icons/hi';
 import NetworkSelector from './NetworkSelector';
 import { ENV } from 'types/environment';
+import { useQuery } from 'react-query';
+import { ethers } from 'ethers';
 
 interface IHeaderProps {
   showUserInfoModal: () => void;
@@ -12,6 +14,26 @@ function Header({ showUserInfoModal }: IHeaderProps) {
   const location = useLocation();
   const { accounts, connect, isLoggedIn } = useWalletProvider()!;
   const userAddress = accounts?.[0];
+
+  const { isLoading: isAvailedVouchersDataLoading, data: availedVouchersData } =
+    useQuery(
+      'availedVouchers',
+      () => {
+        if (!accounts) return;
+
+        return fetch(
+          `https://ace5-223-190-84-114.ngrok.io/api/v1/insta-exit/loyality-data?userAddress=${ethers.utils.getAddress(
+            accounts?.[0],
+          )}`,
+        ).then(res => res.json());
+      },
+      {
+        enabled: isLoggedIn,
+      },
+    );
+  const { userLoyalityScore } = availedVouchersData ?? {};
+
+  console.log(userLoyalityScore);
 
   const showNetworkSelector = [
     '/pools',
@@ -116,6 +138,12 @@ function Header({ showUserInfoModal }: IHeaderProps) {
       </nav>
       <div className="absolute right-6 flex items-center">
         {showNetworkSelector ? <NetworkSelector /> : null}
+
+        {userLoyalityScore ? (
+          <div className="font-base ml-2.5 cursor-pointer rounded-xl bg-hyphen-purple bg-opacity-50 px-4 py-1 font-mono text-white">
+            Score: {userLoyalityScore}
+          </div>
+        ) : null}
         <button
           className="font-base ml-2.5 cursor-pointer rounded-xl bg-hyphen-purple bg-opacity-50 px-4 py-1 font-mono text-white"
           onClick={isLoggedIn ? showUserInfoModal : connect}
