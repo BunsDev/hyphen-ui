@@ -1,3 +1,5 @@
+import CustomTooltip from 'components/CustomTooltip';
+import { useChains } from 'context/Chains';
 import { useTransaction } from 'context/Transaction';
 import useModal from 'hooks/useModal';
 import { HiLockClosed, HiOutlineCheck } from 'react-icons/hi';
@@ -34,8 +36,10 @@ function Voucher({
   voucher,
   voucherMetadata,
 }: IVoucherProps) {
+  const { toChain } = useChains()!;
   const { voucherToRedeem } = useTransaction()!;
   const {
+    chainExcluded,
     contractCall,
     milestoneCode,
     milestoneDesc,
@@ -44,6 +48,9 @@ function Voucher({
   } = voucher;
   const { availed, availedFreeTransactions, assignedFreeTransactions } =
     voucherMetadata ?? {};
+  const isToChainExcluded = toChain
+    ? chainExcluded?.includes(toChain.chainId.toString())
+    : false;
 
   const {
     isVisible: isVoucherFormModalVisible,
@@ -94,7 +101,12 @@ function Voucher({
           <button
             className={styles.voucherRedeemButton}
             onClick={handleRedeem}
-            disabled={availed || userLoyalityScore < thresholdLoyalityScore}
+            disabled={
+              (contractCall && !toChain ? true : false) ||
+              isToChainExcluded ||
+              availed ||
+              userLoyalityScore < thresholdLoyalityScore
+            }
           >
             {voucherToRedeem === milestoneCode ? (
               'Cancel Redemption'
@@ -103,6 +115,10 @@ function Voucher({
                 <HiOutlineCheck className="mr-2" />
                 Redeemed
               </div>
+            ) : contractCall && !toChain ? (
+              'Select destination chain'
+            ) : isToChainExcluded ? (
+              'Destination chain unsupported'
             ) : userLoyalityScore >= thresholdLoyalityScore ? (
               'Redeem'
             ) : (
