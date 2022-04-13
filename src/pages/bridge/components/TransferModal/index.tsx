@@ -22,6 +22,7 @@ import {
   useTransactionInfoModal,
 } from 'context/TransactionInfoModal';
 import CustomTooltip from '../../../../components/CustomTooltip';
+import { useQueryClient } from 'react-query';
 // import { MANUAL_EXIT_RETRIES } from "../../../../config/constants";
 
 export interface ITransferModalProps {
@@ -212,6 +213,7 @@ const ReceivalStep: React.FC<
   // showManualExit,
   stepNumber,
 }) => {
+  const queryClient = useQueryClient();
   const active = currentStepNumber === stepNumber;
   const completed = currentStepNumber > stepNumber;
 
@@ -236,6 +238,7 @@ const ReceivalStep: React.FC<
             refreshSelectedTokenBalance();
             setExitHash(hash);
             setExecuted(true);
+            queryClient.invalidateQueries();
           }
           // else if (tries > MANUAL_EXIT_RETRIES) {
           //   showManualExit();
