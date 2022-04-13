@@ -79,6 +79,8 @@ interface ITransactionContext {
   setExitHash: (exitHash: string | undefined) => void;
   exitHash: string | undefined;
   getExitInfoFromHash: (exitHash: string) => Promise<string>;
+  voucherToRedeem: number | undefined;
+  setVoucherToRedeem: (voucherToRedeem: number | undefined) => void;
 }
 
 const TransactionContext = createContext<ITransactionContext | null>(null);
@@ -123,6 +125,11 @@ const TransactionProvider: React.FC = props => {
     receiverAddress: '',
     isReceiverValid: false,
   });
+
+  // Manage free tx voucher redemption.
+  const [voucherToRedeem, setVoucherToRedeem] = useState<number | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     if (accounts) {
@@ -558,8 +565,7 @@ const TransactionProvider: React.FC = props => {
         toChainId: toChain.chainId,
         useBiconomy: isBiconomyEnabled,
         tag: config.constants.DEPOSIT_TAG,
-        // TODO: add milestone id.
-        // milestone: milestone_id or 0 for non free tx.,
+        milestone: voucherToRedeem || 0,
       });
 
       addTxNotification(
@@ -574,6 +580,7 @@ const TransactionProvider: React.FC = props => {
     },
     [
       accounts,
+      addTxNotification,
       executePreDepositCheckValue?.depositContract,
       fromChain,
       hyphen,
@@ -581,7 +588,7 @@ const TransactionProvider: React.FC = props => {
       selectedToken,
       toChain,
       transferAmount,
-      addTxNotification,
+      voucherToRedeem,
     ],
   );
 
@@ -692,6 +699,8 @@ const TransactionProvider: React.FC = props => {
         setExitHash,
         exitHash,
         getExitInfoFromHash,
+        voucherToRedeem,
+        setVoucherToRedeem,
       }}
       {...props}
     />

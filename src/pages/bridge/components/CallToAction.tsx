@@ -14,11 +14,13 @@ import CustomTooltip from '../../../components/CustomTooltip';
 export interface ICallToActionProps {
   onApproveButtonClick: () => void;
   onTransferButtonClick: () => void;
+  voucherToRedeem?: number;
 }
 
 export const CallToAction: React.FC<ICallToActionProps> = ({
   onApproveButtonClick,
   onTransferButtonClick,
+  voucherToRedeem,
 }) => {
   const {
     executeApproveTokenStatus,
@@ -87,7 +89,9 @@ export const CallToAction: React.FC<ICallToActionProps> = ({
       fetchSelectedTokenApprovalError ? (
         <>
           <span data-tip data-for="whyTransferDisabled">
-            <PrimaryButtonLight disabled>Transfer</PrimaryButtonLight>
+            <PrimaryButtonLight disabled>
+              {voucherToRedeem ? '🎉 Free Transfer' : 'Transfer'}
+            </PrimaryButtonLight>
           </span>
           <CustomTooltip id="whyTransferDisabled">
             {fetchSelectedTokenApprovalError &&
@@ -117,7 +121,7 @@ export const CallToAction: React.FC<ICallToActionProps> = ({
                   className="flex items-center gap-2"
                 >
                   <Spinner />
-                  Transfer
+                  {voucherToRedeem ? '🎉 Free Transfer' : 'Transfer'}
                 </PrimaryButtonLight>
               </div>
               <CustomTooltip id="whyTransferDisabled">
@@ -141,7 +145,9 @@ export const CallToAction: React.FC<ICallToActionProps> = ({
                   </SecondaryButtonLight>
                 )}
                 <span data-tip data-for="whyTransferDisabled">
-                  <PrimaryButtonLight disabled>Transfer</PrimaryButtonLight>
+                  <PrimaryButtonLight disabled>
+                    {voucherToRedeem ? '🎉 Free Transfer' : 'Transfer'}
+                  </PrimaryButtonLight>
                 </span>
                 <CustomTooltip id="whyTransferDisabled">
                   <span>Approve token to enable token transfers</span>
@@ -152,7 +158,7 @@ export const CallToAction: React.FC<ICallToActionProps> = ({
           {fetchSelectedTokenApprovalStatus === Status.SUCCESS &&
             fetchSelectedTokenApprovalValue === true && (
               <PrimaryButtonLight onClick={onTransferButtonClick}>
-                Transfer
+                {voucherToRedeem ? '🎉 Free Transfer' : 'Transfer'}
               </PrimaryButtonLight>
             )}
         </>

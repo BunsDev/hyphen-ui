@@ -28,7 +28,8 @@ interface BridgeProps {}
 const Bridge: React.FC<BridgeProps> = () => {
   const { fromChain, areChainsReady } = useChains()!;
   const { selectedToken } = useToken()!;
-  const { transferAmount, changeTransferAmountInputValue } = useTransaction()!;
+  const { transferAmount, changeTransferAmountInputValue, voucherToRedeem } =
+    useTransaction()!;
   const { isBiconomyAllowed, setIsBiconomyToggledOn, isBiconomyEnabled } =
     useBiconomy()!;
   const { poolInfo } = useHyphen()!;
@@ -52,8 +53,6 @@ const Bridge: React.FC<BridgeProps> = () => {
   } = useModal();
 
   const { executeApproveTokenError, executeApproveToken } = useTokenApproval()!;
-
-  const [voucherToRedeem, setVoucherToRedeem] = useState(undefined);
 
   useEffect(() => {
     (async () => {
@@ -87,8 +86,6 @@ const Bridge: React.FC<BridgeProps> = () => {
       <VouchersModal
         isVisible={isVouchersModalVisible}
         onClose={hideVouchersModal}
-        voucherToRedeem={voucherToRedeem}
-        setVoucherToRedeem={setVoucherToRedeem}
       />
 
       <ErrorModal error={executeApproveTokenError} title={'Approval Error'} />
@@ -103,7 +100,7 @@ const Bridge: React.FC<BridgeProps> = () => {
                 >
                   <HiTicket className="mr-1.5 h-4 w-4 text-gray-500" />
                   <span className="text-xxs font-bold uppercase text-gray-500">
-                    Vouchers
+                    Vouchers {voucherToRedeem ? 'applied (1)' : ''}
                   </span>
                 </button>
 
@@ -170,10 +167,11 @@ const Bridge: React.FC<BridgeProps> = () => {
               <CallToAction
                 onApproveButtonClick={showApprovalModal}
                 onTransferButtonClick={showTransferModal}
+                voucherToRedeem={voucherToRedeem}
               />
             </div>
           </div>
-          <TransactionFee />
+          {!voucherToRedeem ? <TransactionFee /> : null}
         </div>
       </div>
     </>

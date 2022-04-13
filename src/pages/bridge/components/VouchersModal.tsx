@@ -8,6 +8,7 @@ import { useWalletProvider } from 'context/WalletProvider';
 import useModal from 'hooks/useModal';
 import VoucherFormModal from './Voucher/VoucherFormModal';
 import { useState } from 'react';
+import { useTransaction } from 'context/Transaction';
 
 const mockAvailedVouchersData = {
   userLoyalityScore: 650,
@@ -84,17 +85,11 @@ const mockVouchersData = {
 interface IVouchersModalProps {
   isVisible: boolean;
   onClose: () => void;
-  voucherToRedeem: number | undefined;
-  setVoucherToRedeem: any;
 }
 
-function VouchersModal({
-  isVisible,
-  onClose,
-  voucherToRedeem,
-  setVoucherToRedeem,
-}: IVouchersModalProps) {
+function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
   const { accounts, isLoggedIn } = useWalletProvider()!;
+  const { voucherToRedeem, setVoucherToRedeem } = useTransaction()!;
   // const { isLoading: isVouchersDataLoading, data: vouchersData } = useQuery(
   //   'vouchers',
   //   () =>
@@ -124,30 +119,19 @@ function VouchersModal({
   const milestonesMetadata = mockAvailedVouchersData.milestoneMetaDataMap;
   const milestoneList = mockVouchersData.milestoneList;
 
-  const {
-    isVisible: isVoucherFormModalVisible,
-    hideModal: hideVoucherFormModal,
-    showModal: showVoucherFormModal,
-  } = useModal();
-
-  function handleRedeem(voucher: IVoucher) {
-    const { contractCall, milestoneCode } = voucher;
-    setVoucherToRedeem(milestoneCode);
-    if (contractCall) {
-      console.log('woah woah woah');
+  function handleFreeTxRedeem(voucher: IVoucher) {
+    const { milestoneCode } = voucher;
+    if (voucherToRedeem === milestoneCode) {
+      setVoucherToRedeem(undefined);
     } else {
-      showVoucherFormModal();
+      setVoucherToRedeem(milestoneCode);
     }
+    onClose();
   }
 
   return (
     <>
       <Modal isVisible={isVisible} onClose={onClose}>
-        <VoucherFormModal
-          isVisible={isVoucherFormModalVisible}
-          onClose={hideVoucherFormModal}
-          voucherCode={voucherToRedeem}
-        />
         <div className="relative rounded-3xl bg-white p-6 shadow-2xl">
           <div className="absolute -inset-2 -z-10 rounded-3xl bg-white/60 opacity-50 blur-lg"></div>
           <div className="flex flex-col">
@@ -215,7 +199,7 @@ function VouchersModal({
                       return (
                         <Voucher
                           key={milestoneCode}
-                          redeem={handleRedeem}
+                          handleFreeTxRedeem={handleFreeTxRedeem}
                           userLoyalityScore={userLoyalityScore}
                           voucher={voucher}
                           voucherMetadata={voucherMetadata}

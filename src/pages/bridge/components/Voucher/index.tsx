@@ -1,5 +1,8 @@
+import { useTransaction } from 'context/Transaction';
+import useModal from 'hooks/useModal';
 import { HiLockClosed, HiOutlineCheck } from 'react-icons/hi';
 import styles from './Voucher.module.css';
+import VoucherFormModal from './VoucherFormModal';
 
 export interface IVoucher {
   chainExcluded?: string[];
@@ -19,65 +22,99 @@ export interface IVoucherMetadata {
 }
 
 interface IVoucherProps {
-  redeem: (voucher: IVoucher) => void;
+  handleFreeTxRedeem: (voucher: IVoucher) => void;
   userLoyalityScore: number;
   voucher: IVoucher;
   voucherMetadata: IVoucherMetadata;
 }
 
 function Voucher({
-  redeem,
+  handleFreeTxRedeem,
   userLoyalityScore,
   voucher,
   voucherMetadata,
 }: IVoucherProps) {
-  const { milestoneDesc, milestoneTitle, thresholdLoyalityScore } = voucher;
+  const { voucherToRedeem } = useTransaction()!;
+  const {
+    contractCall,
+    milestoneCode,
+    milestoneDesc,
+    milestoneTitle,
+    thresholdLoyalityScore,
+  } = voucher;
   const { availed, availedFreeTransactions, assignedFreeTransactions } =
     voucherMetadata ?? {};
 
-  return (
-    <div className={styles.voucher}>
-      <div className={styles.voucherLogoContainer}>
-        <img
-          src={`${process.env.PUBLIC_URL}/hyphen-logo-small.svg`}
-          className={styles.voucherLogo}
-          alt="Hyphen voucher"
-        />
-      </div>
+  const {
+    isVisible: isVoucherFormModalVisible,
+    hideModal: hideVoucherFormModal,
+    showModal: showVoucherFormModal,
+  } = useModal();
 
-      <div className={styles.voucherDescription}>
-        <div className="flex flex-col items-center">
-          <h3 className="mb-2 text-base font-semibold text-white">
-            {milestoneTitle}
-          </h3>
-          <p className="mb-4 text-center text-xs text-white">
-            {milestoneDesc}{' '}
-            {assignedFreeTransactions
-              ? `- (${assignedFreeTransactions} transactions remaining)`
-              : ''}
-          </p>
+  function handleRedeem() {
+    if (contractCall) {
+      handleFreeTxRedeem(voucher);
+    } else {
+      showVoucherFormModal();
+    }
+  }
+
+  return (
+    <>
+      {isVoucherFormModalVisible ? (
+        <VoucherFormModal
+          isVisible={isVoucherFormModalVisible}
+          onClose={hideVoucherFormModal}
+          voucherCode={milestoneCode}
+        />
+      ) : null}
+      <div className={styles.voucher}>
+        <div className={styles.voucherLogoContainer}>
+          <img
+            src={`${process.env.PUBLIC_URL}/hyphen-logo-small.svg`}
+            className={styles.voucherLogo}
+            alt="Hyphen voucher"
+          />
         </div>
-        <button
-          className={styles.voucherRedeemButton}
-          onClick={() => redeem(voucher)}
-          disabled={availed || userLoyalityScore < thresholdLoyalityScore}
-        >
-          {availed ? (
-            <div className="flex items-center justify-center">
-              <HiOutlineCheck className="mr-2" />
-              Redeemed
-            </div>
-          ) : userLoyalityScore >= thresholdLoyalityScore ? (
-            'Redeem'
-          ) : (
-            <div className="flex items-center justify-center">
-              <HiLockClosed className="mr-2" />
-              Unlocks at {thresholdLoyalityScore}
-            </div>
-          )}
-        </button>
+
+        <div className={styles.voucherDescription}>
+          <div className="flex flex-col items-center">
+            <h3 className="mb-2 text-base font-semibold text-white">
+              {milestoneTitle}
+            </h3>
+            <p className="mb-4 text-center text-xs text-white">
+              {milestoneDesc}{' '}
+              {assignedFreeTransactions && availedFreeTransactions
+                ? `- (${
+                    assignedFreeTransactions - availedFreeTransactions
+                  } transactions remaining)`
+                : ''}
+            </p>
+          </div>
+          <button
+            className={styles.voucherRedeemButton}
+            onClick={handleRedeem}
+            disabled={availed || userLoyalityScore < thresholdLoyalityScore}
+          >
+            {voucherToRedeem === milestoneCode ? (
+              'Cancel Redemption'
+            ) : availed ? (
+              <div className="flex items-center justify-center">
+                <HiOutlineCheck className="mr-2" />
+                Redeemed
+              </div>
+            ) : userLoyalityScore >= thresholdLoyalityScore ? (
+              'Redeem'
+            ) : (
+              <div className="flex items-center justify-center">
+                <HiLockClosed className="mr-2" />
+                Unlocks at {thresholdLoyalityScore}
+              </div>
+            )}
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
