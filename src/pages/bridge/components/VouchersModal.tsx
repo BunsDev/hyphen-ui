@@ -10,77 +10,77 @@ import VoucherFormModal from './Voucher/VoucherFormModal';
 import { useState } from 'react';
 import { useTransaction } from 'context/Transaction';
 
-const mockAvailedVouchersData = {
-  userLoyalityScore: 650,
-  milestoneMetaDataMap: {
-    // 1: {
-    //   availed: true,
-    // },
-    2: {
-      availed: true,
-    },
-    5: {
-      availed: false,
-      availedFreeTransactions: 1,
-      assignedFreeTransactions: 3,
-    },
-  },
-};
+// const mockAvailedVouchersData = {
+//   userLoyalityScore: 650,
+//   milestoneMetaDataMap: {
+//     // 1: {
+//     //   availed: true,
+//     // },
+//     2: {
+//       availed: true,
+//     },
+//     5: {
+//       availed: false,
+//       availedFreeTransactions: 1,
+//       assignedFreeTransactions: 3,
+//     },
+//   },
+// };
 
-const mockVouchersData = {
-  milestoneList: [
-    {
-      milestoneCode: 1,
-      thresholdLoyalityScore: 2500,
-      milestoneDesc:
-        "Know Biconomy's team more closely, Get a chance to join the Biconomy’s famous Gaming Night",
-      milestoneTitle: 'Join Us',
-      isActive: true,
-      contractCall: false,
-      freeTransactions: 0,
-    },
-    {
-      milestoneCode: 2,
-      thresholdLoyalityScore: 600,
-      milestoneDesc: 'Enroll for Biconomy Tshirt',
-      milestoneTitle: 'Get Your Swag',
-      isActive: true,
-      contractCall: false,
-      freeTransactions: 0,
-    },
-    {
-      milestoneCode: 3,
-      thresholdLoyalityScore: 600,
-      milestoneDesc:
-        'Get a chance to Join Next Biconomy Meetup Event in your city',
-      milestoneTitle: 'Free Entry Passes',
-      isActive: true,
-      contractCall: false,
-      freeTransactions: 0,
-    },
-    {
-      milestoneCode: 4,
-      thresholdLoyalityScore: 600,
-      milestoneDesc:
-        'Get Biconomy Mug for your daily coffee doses with Biconomy',
-      milestoneTitle: 'Coffee With Biconomy',
-      isActive: true,
-      contractCall: false,
-      freeTransactions: 0,
-    },
-    {
-      milestoneCode: 5,
-      thresholdLoyalityScore: 600,
-      milestoneDesc:
-        'Gasless exits on non-evmGet waive of on gasFee while exiting on non-evm chains',
-      milestoneTitle: 'Gasless Exit',
-      isActive: true,
-      contractCall: true,
-      freeTransactions: 3,
-      chainExcluded: ['1', '5', '4'],
-    },
-  ],
-};
+// const mockVouchersData = {
+//   milestoneList: [
+//     {
+//       milestoneCode: 1,
+//       thresholdLoyalityScore: 2500,
+//       milestoneDesc:
+//         "Know Biconomy's team more closely, Get a chance to join the Biconomy’s famous Gaming Night",
+//       milestoneTitle: 'Join Us',
+//       isActive: true,
+//       contractCall: false,
+//       freeTransactions: 0,
+//     },
+//     {
+//       milestoneCode: 2,
+//       thresholdLoyalityScore: 600,
+//       milestoneDesc: 'Enroll for Biconomy Tshirt',
+//       milestoneTitle: 'Get Your Swag',
+//       isActive: true,
+//       contractCall: false,
+//       freeTransactions: 0,
+//     },
+//     {
+//       milestoneCode: 3,
+//       thresholdLoyalityScore: 600,
+//       milestoneDesc:
+//         'Get a chance to Join Next Biconomy Meetup Event in your city',
+//       milestoneTitle: 'Free Entry Passes',
+//       isActive: true,
+//       contractCall: false,
+//       freeTransactions: 0,
+//     },
+//     {
+//       milestoneCode: 4,
+//       thresholdLoyalityScore: 600,
+//       milestoneDesc:
+//         'Get Biconomy Mug for your daily coffee doses with Biconomy',
+//       milestoneTitle: 'Coffee With Biconomy',
+//       isActive: true,
+//       contractCall: false,
+//       freeTransactions: 0,
+//     },
+//     {
+//       milestoneCode: 5,
+//       thresholdLoyalityScore: 600,
+//       milestoneDesc:
+//         'Gasless exits on non-evmGet waive of on gasFee while exiting on non-evm chains',
+//       milestoneTitle: 'Gasless Exit',
+//       isActive: true,
+//       contractCall: true,
+//       freeTransactions: 3,
+//       chainExcluded: ['1', '5', '4'],
+//     },
+//   ],
+// };
 
 interface IVouchersModalProps {
   isVisible: boolean;
@@ -90,34 +90,32 @@ interface IVouchersModalProps {
 function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
   const { accounts, isLoggedIn } = useWalletProvider()!;
   const { voucherToRedeem, setVoucherToRedeem } = useTransaction()!;
-  // const { isLoading: isVouchersDataLoading, data: vouchersData } = useQuery(
-  //   'vouchers',
-  //   () =>
-  //     fetch('https://localhost:3000/milestone-list').then(res => res.json()),
-  //   {
-  //     enabled: isLoggedIn && isVisible,
-  //   },
-  // );
-  // const { milestoneList } = vouchersData ?? {};
 
-  // const { isLoading: isAvailedVouchersDataLoading, data: availedVouchersData } =
-  //   useQuery(
-  //     'vouchers',
-  //     () =>
-  //       fetch(`https://localhost:3000/availed-vouchers`).then(res =>
-  //         res.json(),
-  //       ),
-  //     {
-  //       enabled: isLoggedIn && isVisible,
-  //     },
-  //   );
+  const { isLoading: isAvailedVouchersDataLoading, data: availedVouchersData } =
+    useQuery(
+      'availedVouchers',
+      () =>
+        fetch(
+          `https://ace5-223-190-84-114.ngrok.io/api/v1/insta-exit/loyality-data?userAddress=0x61943A66606e6442441fF1483080e7fB10558C91`,
+        ).then(res => res.json()),
+      {
+        enabled: isLoggedIn && isVisible,
+      },
+    );
+  const { milestoneMetaDataMap: milestonesMetadata, userLoyalityScore } =
+    availedVouchersData ?? {};
 
-  // TODO: temp variables, delete after API is ready.
-  const userLoyalityScore = mockAvailedVouchersData.userLoyalityScore;
-  const isVouchersDataLoading = false;
-  const isAvailedVouchersDataLoading = false;
-  const milestonesMetadata = mockAvailedVouchersData.milestoneMetaDataMap;
-  const milestoneList = mockVouchersData.milestoneList;
+  const { isLoading: isVouchersDataLoading, data: vouchersData } = useQuery(
+    'vouchers',
+    () =>
+      fetch(
+        'https://ace5-223-190-84-114.ngrok.io/api/v1/data/milestone-list',
+      ).then(res => res.json()),
+    {
+      enabled: isLoggedIn && isVisible && availedVouchersData !== undefined,
+    },
+  );
+  const { milestoneList } = vouchersData ?? {};
 
   function handleFreeTxRedeem(voucher: IVoucher) {
     const { milestoneCode } = voucher;
@@ -148,7 +146,7 @@ function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
             </div>
 
             <div className="grid max-h-96 grid-cols-1 gap-2 overflow-auto">
-              {isVouchersDataLoading ? (
+              {isVouchersDataLoading || isAvailedVouchersDataLoading ? (
                 <section className="flex h-40 items-start justify-center pt-12">
                   <svg
                     role="status"
@@ -183,10 +181,13 @@ function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
                 </section>
               ) : null}
 
-              {milestoneList && milestoneList.length > 0
+              {milestonesMetadata &&
+              userLoyalityScore &&
+              milestoneList &&
+              milestoneList.length > 0
                 ? milestoneList
                     .sort(
-                      (a, b) =>
+                      (a: any, b: any) =>
                         a.thresholdLoyalityScore - b.thresholdLoyalityScore,
                     )
                     .map((voucher: IVoucher) => {
