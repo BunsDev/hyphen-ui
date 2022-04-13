@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useWalletProvider } from '../../context/WalletProvider';
 import { useChains } from '../../context/Chains';
@@ -53,6 +53,8 @@ const Bridge: React.FC<BridgeProps> = () => {
 
   const { executeApproveTokenError, executeApproveToken } = useTokenApproval()!;
 
+  const [voucherToRedeem, setVoucherToRedeem] = useState(undefined);
+
   useEffect(() => {
     (async () => {
       await connect().catch(e => {
@@ -85,6 +87,8 @@ const Bridge: React.FC<BridgeProps> = () => {
       <VouchersModal
         isVisible={isVouchersModalVisible}
         onClose={hideVouchersModal}
+        voucherToRedeem={voucherToRedeem}
+        setVoucherToRedeem={setVoucherToRedeem}
       />
 
       <ErrorModal error={executeApproveTokenError} title={'Approval Error'} />

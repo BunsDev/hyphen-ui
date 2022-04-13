@@ -7,13 +7,14 @@ import { useQuery } from 'react-query';
 import { useWalletProvider } from 'context/WalletProvider';
 import useModal from 'hooks/useModal';
 import VoucherFormModal from './Voucher/VoucherFormModal';
+import { useState } from 'react';
 
 const mockAvailedVouchersData = {
   userLoyalityScore: 650,
   milestoneMetaDataMap: {
-    1: {
-      availed: true,
-    },
+    // 1: {
+    //   availed: true,
+    // },
     2: {
       availed: true,
     },
@@ -83,11 +84,17 @@ const mockVouchersData = {
 interface IVouchersModalProps {
   isVisible: boolean;
   onClose: () => void;
+  voucherToRedeem: number | undefined;
+  setVoucherToRedeem: any;
 }
 
-function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
+function VouchersModal({
+  isVisible,
+  onClose,
+  voucherToRedeem,
+  setVoucherToRedeem,
+}: IVouchersModalProps) {
   const { accounts, isLoggedIn } = useWalletProvider()!;
-
   // const { isLoading: isVouchersDataLoading, data: vouchersData } = useQuery(
   //   'vouchers',
   //   () =>
@@ -114,6 +121,7 @@ function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
   const userLoyalityScore = mockAvailedVouchersData.userLoyalityScore;
   const isVouchersDataLoading = false;
   const isAvailedVouchersDataLoading = false;
+  const milestonesMetadata = mockAvailedVouchersData.milestoneMetaDataMap;
   const milestoneList = mockVouchersData.milestoneList;
 
   const {
@@ -123,11 +131,14 @@ function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
   } = useModal();
 
   function handleRedeem(voucher: IVoucher) {
-    console.log(voucher);
-    // showVoucherFormModal();
+    const { contractCall, milestoneCode } = voucher;
+    setVoucherToRedeem(milestoneCode);
+    if (contractCall) {
+      console.log('woah woah woah');
+    } else {
+      showVoucherFormModal();
+    }
   }
-
-  console.log(milestoneList[0]);
 
   return (
     <>
@@ -135,6 +146,7 @@ function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
         <VoucherFormModal
           isVisible={isVoucherFormModalVisible}
           onClose={hideVoucherFormModal}
+          voucherCode={voucherToRedeem}
         />
         <div className="relative rounded-3xl bg-white p-6 shadow-2xl">
           <div className="absolute -inset-2 -z-10 rounded-3xl bg-white/60 opacity-50 blur-lg"></div>
@@ -193,14 +205,23 @@ function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
                       (a, b) =>
                         a.thresholdLoyalityScore - b.thresholdLoyalityScore,
                     )
-                    .map((voucher: IVoucher) => (
-                      <Voucher
-                        key={voucher.milestoneCode}
-                        voucher={voucher}
-                        redeem={handleRedeem}
-                        userLoyalityScore={userLoyalityScore}
-                      />
-                    ))
+                    .map((voucher: IVoucher) => {
+                      const { milestoneCode } = voucher;
+                      const voucherMetadata =
+                        milestonesMetadata[
+                          milestoneCode as keyof typeof milestonesMetadata
+                        ];
+
+                      return (
+                        <Voucher
+                          key={milestoneCode}
+                          redeem={handleRedeem}
+                          userLoyalityScore={userLoyalityScore}
+                          voucher={voucher}
+                          voucherMetadata={voucherMetadata}
+                        />
+                      );
+                    })
                 : null}
             </div>
           </div>

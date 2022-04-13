@@ -1,13 +1,15 @@
 import { Dialog } from '@headlessui/react';
 import Modal from 'components/Modal';
+import { useWalletProvider } from 'context/WalletProvider';
 import { Formik } from 'formik';
 import { IoMdClose } from 'react-icons/io';
+import { useMutation, useQueryClient } from 'react-query';
 
 interface IVoucherFormProps {
-  onClose: () => void;
+  handleFormSubmit: (email: string) => void;
 }
 
-function VoucherForm({ onClose }: IVoucherFormProps) {
+function VoucherForm({ handleFormSubmit }: IVoucherFormProps) {
   return (
     <Formik
       initialValues={{ email: '' }}
@@ -25,9 +27,8 @@ function VoucherForm({ onClose }: IVoucherFormProps) {
         return errors;
       }}
       onSubmit={(values, { setSubmitting }) => {
-        console.log(values);
         setSubmitting(false);
-        onClose();
+        handleFormSubmit(values.email);
       }}
     >
       {({
@@ -70,9 +71,59 @@ function VoucherForm({ onClose }: IVoucherFormProps) {
 interface IVoucherFormModalProps {
   isVisible: boolean;
   onClose: () => void;
+  voucherCode: number | undefined;
 }
 
-function VoucherFormModal({ isVisible, onClose }: IVoucherFormModalProps) {
+function VoucherFormModal({
+  isVisible,
+  onClose,
+  voucherCode,
+}: IVoucherFormModalProps) {
+  const queryClient = useQueryClient();
+  const { accounts, signer } = useWalletProvider()!;
+
+  const {
+    isError: redeemVoucherError,
+    isLoading: redeemVoucherLoading,
+    mutate: redeemVoucherMutation,
+  } = useMutation(
+    ({
+      email,
+      signedMessage,
+    }: {
+      email: string;
+      signedMessage: string | undefined;
+    }) => {
+      return fetch('/api/v1/data/verify-and-claim', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          milestoneCode: voucherCode,
+          signedMessage,
+          walletAddress: accounts?.[0],
+        }),
+      });
+    },
+  );
+
+  async function handleFormSubmit(email: string) {
+    const signedEmail = await signer?.signMessage(email);
+    redeemVoucherMutation(
+      { email, signedMessage: signedEmail },
+      {
+        onSuccess: onRedeemVoucherSuccess,
+      },
+    );
+  }
+
+  function onRedeemVoucherSuccess() {
+    queryClient.invalidateQueries();
+    onClose();
+  }
+
   return (
     <Modal isVisible={isVisible} onClose={onClose}>
       <div className="relative rounded-3xl bg-white p-6 shadow-2xl">
@@ -90,7 +141,7 @@ function VoucherFormModal({ isVisible, onClose }: IVoucherFormModalProps) {
             </button>
           </div>
 
-          <VoucherForm onClose={onClose} />
+          <VoucherForm handleFormSubmit={handleFormSubmit} />
         </div>
       </div>
     </Modal>

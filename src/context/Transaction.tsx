@@ -14,7 +14,7 @@ import {
 import lpmanagerABI from 'abis/LiquidityPools.abi.json';
 
 // @ts-ignore
-import { RESPONSE_CODES } from '@biconomy/hyphen-staging';
+import { RESPONSE_CODES } from '@biconomy/hyphen';
 
 import {
   BASE_DIVISOR,
@@ -558,6 +558,8 @@ const TransactionProvider: React.FC = props => {
         toChainId: toChain.chainId,
         useBiconomy: isBiconomyEnabled,
         tag: config.constants.DEPOSIT_TAG,
+        // TODO: add milestone id.
+        // milestone: milestone_id or 0 for non free tx.,
       });
 
       addTxNotification(

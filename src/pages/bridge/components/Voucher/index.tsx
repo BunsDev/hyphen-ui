@@ -1,3 +1,4 @@
+import { HiLockClosed, HiOutlineCheck } from 'react-icons/hi';
 import styles from './Voucher.module.css';
 
 export interface IVoucher {
@@ -10,14 +11,29 @@ export interface IVoucher {
   milestoneTitle: string;
   thresholdLoyalityScore: number;
 }
-interface IVoucherProps {
-  voucher: IVoucher;
-  redeem: (voucher: IVoucher) => void;
-  userLoyalityScore: number;
+
+export interface IVoucherMetadata {
+  availed: boolean;
+  availedFreeTransactions?: number;
+  assignedFreeTransactions?: number;
 }
 
-function Voucher({ voucher, redeem, userLoyalityScore }: IVoucherProps) {
+interface IVoucherProps {
+  redeem: (voucher: IVoucher) => void;
+  userLoyalityScore: number;
+  voucher: IVoucher;
+  voucherMetadata: IVoucherMetadata;
+}
+
+function Voucher({
+  redeem,
+  userLoyalityScore,
+  voucher,
+  voucherMetadata,
+}: IVoucherProps) {
   const { milestoneDesc, milestoneTitle, thresholdLoyalityScore } = voucher;
+  const { availed, availedFreeTransactions, assignedFreeTransactions } =
+    voucherMetadata ?? {};
 
   return (
     <div className={styles.voucher}>
@@ -34,16 +50,31 @@ function Voucher({ voucher, redeem, userLoyalityScore }: IVoucherProps) {
           <h3 className="mb-2 text-base font-semibold text-white">
             {milestoneTitle}
           </h3>
-          <p className="mb-4 text-center text-xs text-white">{milestoneDesc}</p>
+          <p className="mb-4 text-center text-xs text-white">
+            {milestoneDesc}{' '}
+            {assignedFreeTransactions
+              ? `- (${assignedFreeTransactions} transactions remaining)`
+              : ''}
+          </p>
         </div>
         <button
           className={styles.voucherRedeemButton}
           onClick={() => redeem(voucher)}
-          disabled={userLoyalityScore < thresholdLoyalityScore}
+          disabled={availed || userLoyalityScore < thresholdLoyalityScore}
         >
-          {userLoyalityScore >= thresholdLoyalityScore
-            ? 'Redeem'
-            : `Unlocks at ${thresholdLoyalityScore}`}
+          {availed ? (
+            <div className="flex items-center justify-center">
+              <HiOutlineCheck className="mr-2" />
+              Redeemed
+            </div>
+          ) : userLoyalityScore >= thresholdLoyalityScore ? (
+            'Redeem'
+          ) : (
+            <div className="flex items-center justify-center">
+              <HiLockClosed className="mr-2" />
+              Unlocks at {thresholdLoyalityScore}
+            </div>
+          )}
         </button>
       </div>
     </div>
