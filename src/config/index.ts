@@ -7,7 +7,7 @@ let hyphenBaseUrl;
 if (process.env.REACT_APP_ENV === ENV.production) {
   hyphenBaseUrl = "https://hyphen-v2-api.biconomy.io";
 } else if (process.env.REACT_APP_ENV === ENV.test) {
-  hyphenBaseUrl = "https://hyphen-v2-integration-api.biconomy.io";
+  hyphenBaseUrl = "http://localhost:3000";
 } else {
   hyphenBaseUrl = "https://hyphen-v2-staging-api.biconomy.io";
 }

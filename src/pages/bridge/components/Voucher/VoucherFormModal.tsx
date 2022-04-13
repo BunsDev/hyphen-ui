@@ -1,6 +1,7 @@
 import { Dialog } from '@headlessui/react';
 import Modal from 'components/Modal';
 import { useWalletProvider } from 'context/WalletProvider';
+import { ethers } from 'ethers';
 import { Formik } from 'formik';
 import { IoMdClose } from 'react-icons/io';
 import { useMutation, useQueryClient } from 'react-query';
@@ -87,14 +88,18 @@ function VoucherFormModal({
     isLoading: redeemVoucherLoading,
     mutate: redeemVoucherMutation,
   } = useMutation(
-    ({
+    async ({
       email,
       signedMessage,
     }: {
       email: string;
       signedMessage: string | undefined;
     }) => {
-      return fetch('/api/v1/data/verify-and-claim', {
+      if (!accounts) {
+        return;
+      }
+
+      return fetch('http://ace5-223-190-84-114.ngrok.io/api/v1/data/verify-and-claim', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +108,7 @@ function VoucherFormModal({
           email,
           milestoneCode: voucherCode,
           signedMessage,
-          walletAddress: accounts?.[0],
+          walletAddress: ethers.utils.getAddress(accounts?.[0]),
         }),
       });
     },

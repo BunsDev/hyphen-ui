@@ -9,10 +9,10 @@ import { LiquidityContractConfig } from '.';
 export const LiquidityPool: LiquidityContractConfig = {
   name: 'LiquidityPool',
   [MUMBAI.chainId]: {
-    address: '0xDe4e4CDa407Eee8d9E76261a1F2d229A572743dE',
+    address: '0x7A538C10986D6ECA4548fC89F3625773C059C31D',
   },
   [GOERLI.chainId]: {
-    address: '0x8033Bd14c4C114C14C910fe05Ff13DB4C481a85D',
+    address: '0x7A538C10986D6ECA4548fC89F3625773C059C31D',
   },
   [FUJI.chainId]: {
     address: '0xB726675394b2dDeE2C897ad31a62C7545Ad7C68D',

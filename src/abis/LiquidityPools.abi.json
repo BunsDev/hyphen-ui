@@ -104,6 +104,12 @@
         "internalType": "string",
         "name": "tag",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "mileStoneCode",
+        "type": "uint256"
       }
     ],
     "name": "Deposit",
@@ -366,6 +372,11 @@
         "internalType": "string",
         "name": "tag",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "mileStoneCode",
+        "type": "uint256"
       }
     ],
     "name": "depositErc20",
@@ -389,11 +400,40 @@
         "internalType": "string",
         "name": "tag",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "mileStoneCode",
+        "type": "uint256"
       }
     ],
     "name": "depositNative",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "depositVolume",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -718,6 +758,11 @@
         "internalType": "string",
         "name": "tag",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "mileStoneCode",
+        "type": "uint256"
       }
     ],
     "name": "permitAndDepositErc20",
@@ -788,6 +833,11 @@
         "internalType": "string",
         "name": "tag",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "mileStoneCode",
+        "type": "uint256"
       }
     ],
     "name": "permitEIP2612AndDepositErc20",
@@ -883,6 +933,29 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "setDepositVolume",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_executorManagerAddress",
         "type": "address"
       }
@@ -927,6 +1000,24 @@
       }
     ],
     "name": "setTrustedForwarder",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_count",
+        "type": "uint256"
+      }
+    ],
+    "name": "setTxnCount",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -978,6 +1069,25 @@
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "txnCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

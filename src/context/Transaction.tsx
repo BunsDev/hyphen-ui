@@ -487,6 +487,8 @@ const TransactionProvider: React.FC = props => {
       toChainId: toChain.chainId,
       userAddress: accounts[0],
     });
+    console.log("+");
+    console.log(transferStatus);
 
     if (transferStatus.code === RESPONSE_CODES.ALLOWANCE_NOT_GIVEN) {
       throw new Error('Approval not given for token');
@@ -552,6 +554,8 @@ const TransactionProvider: React.FC = props => {
           selectedToken[fromChain.chainId].address,
         );
       }
+
+      console.log("++", executePreDepositCheckValue.depositContract);
 
       let depositTx = await hyphen.depositManager.deposit({
         sender: accounts[0],

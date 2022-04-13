@@ -20,6 +20,6 @@ export type TokenConfig = {
   };
 };
 
-export const tokens = [AVAX, ETH, USDC, USDT, BICO];
+export const tokens = [USDT];
 
 export default tokens;

@@ -1,6 +1,6 @@
 import { Dialog } from '@headlessui/react';
 import { IoMdClose } from 'react-icons/io';
-
+import { ethers } from 'ethers';
 import Modal from 'components/Modal';
 import Voucher, { IVoucher } from './Voucher';
 import { useQuery } from 'react-query';
@@ -94,10 +94,15 @@ function VouchersModal({ isVisible, onClose }: IVouchersModalProps) {
   const { isLoading: isAvailedVouchersDataLoading, data: availedVouchersData } =
     useQuery(
       'availedVouchers',
-      () =>
-        fetch(
-          `https://ace5-223-190-84-114.ngrok.io/api/v1/insta-exit/loyality-data?userAddress=0x61943A66606e6442441fF1483080e7fB10558C91`,
-        ).then(res => res.json()),
+      () => {
+        if (!accounts) return;
+
+        return fetch(
+          `https://ace5-223-190-84-114.ngrok.io/api/v1/insta-exit/loyality-data?userAddress=${ethers.utils.getAddress(
+            accounts?.[0],
+          )}`,
+        ).then(res => res.json());
+      },
       {
         enabled: isLoggedIn && isVisible,
       },
